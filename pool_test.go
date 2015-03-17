@@ -10,9 +10,13 @@ import (
 func ExamplePool() {
 	go func() {
 		if l, err := net.Listen("tcp", "localhost:10000"); err == nil {
+			p := NewPool(l.Accept)
 			for {
-				if c, err := l.Accept(); err == nil {
-					go io.Copy(os.Stdout, c)
+				if c, err := p.Get(); err == nil {
+					go func() {
+						io.Copy(os.Stdout, c)
+						c.Close()
+					}()
 					// Output:
 					// hello world
 					// hello world
