@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// NextConn returns a new net.Conn
 type NextConn func() (net.Conn, error)
 
 type limitConn struct {
