@@ -25,6 +25,7 @@ func (c *limitConn) Close() error {
 	return c.Conn.Close()
 }
 
+// PoolLimiter limits the number of concurrent connections returned by next to limit
 func PoolLimiter(next NextConn, limit uint64) NextConn {
 	var mu sync.Mutex
 	cond := sync.NewCond(&mu)
@@ -48,12 +49,14 @@ func PoolLimiter(next NextConn, limit uint64) NextConn {
 	}
 }
 
+// Pool manages connections
 type Pool struct {
 	next NextConn
 	reqs *requests
 	dead chan struct{}
 }
 
+// NewPool creates a new Pool object for managing connections
 func NewPool(next NextConn) *Pool {
 	p := &Pool{
 		next: next,
@@ -66,6 +69,8 @@ func NewPool(next NextConn) *Pool {
 
 var ErrPoolClosed = errors.New("pool closed")
 
+// Get will return a net.Conn, it can be called concurrently
+// and calls to Get() will be returned in the order they were called.
 func (p *Pool) Get() (net.Conn, error) {
 	if c, ok := <-p.reqs.submit(); ok {
 		return c, nil
@@ -99,6 +104,7 @@ func (p *Pool) manage() {
 	}
 }
 
+// Close closes the pool and cancels calls to Get()
 func (p *Pool) Close() error {
 	p.reqs.close()
 	close(p.dead)
