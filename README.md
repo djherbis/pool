@@ -1,4 +1,7 @@
-pool [![GoDoc](https://godoc.org/github.com/djherbis/pool?status.svg)](https://godoc.org/github.com/djherbis/pool)
+pool 
+
+[![GoDoc](https://godoc.org/github.com/djherbis/pool?status.svg)](https://godoc.org/github.com/djherbis/pool)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
 ======
 
 Usage
