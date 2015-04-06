@@ -29,7 +29,7 @@ func ExamplePool() {
 		}
 	}()
 
-	p := NewPool(PoolLimiter(func() (net.Conn, error) {
+	p := NewPool(Limiter(func() (net.Conn, error) {
 		return net.Dial("tcp", "localhost:10000")
 	}, 3))
 
