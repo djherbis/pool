@@ -26,8 +26,9 @@ func (c *limitConn) Close() error {
 	return c.Conn.Close()
 }
 
-// PoolLimiter limits the number of concurrent connections returned by next to limit
-func PoolLimiter(next NextConn, limit uint64) NextConn {
+// Limiter limits the number of concurrent connections returned by next to limit.
+// The number of connections is calculated as # of connections returned - # closed.
+func Limiter(next NextConn, limit uint64) NextConn {
 	var mu sync.Mutex
 	cond := sync.NewCond(&mu)
 
