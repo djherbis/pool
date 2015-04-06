@@ -69,6 +69,7 @@ func NewPool(next NextConn) *Pool {
 	return p
 }
 
+// ErrPoolClosed is returned by ops called when the pool is closed
 var ErrPoolClosed = errors.New("pool closed")
 
 // Get will return a net.Conn, it can be called concurrently
@@ -142,15 +143,17 @@ func (r *requests) submit() <-chan net.Conn {
 func (r *requests) next() (req chan<- net.Conn, ok bool) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+
 	for len(r.reqs) == 0 && !r.dead {
 		r.cond.Wait()
 	}
+
 	if r.dead {
 		return nil, false
-	} else {
-		req, r.reqs = r.reqs[0], r.reqs[1:]
-		return req, true
 	}
+
+	req, r.reqs = r.reqs[0], r.reqs[1:]
+	return req, true
 }
 
 func (r *requests) close() {
