@@ -3,7 +3,8 @@ pool
 
 [![GoDoc](https://godoc.org/github.com/djherbis/pool?status.svg)](https://godoc.org/github.com/djherbis/pool)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE.txt)
-[![Build Status](https://travis-ci.org/djherbis/pool.svg?branch=master)](https://travis-ci.org/djherbis/pool) 
+[![Build Status](https://travis-ci.org/djherbis/pool.svg?branch=master)](https://travis-ci.org/djherbis/pool)
+[![Coverage Status](https://coveralls.io/repos/djherbis/pool/badge.svg?branch=master)](https://coveralls.io/r/djherbis/pool?branch=master)
 
 Usage
 -----
