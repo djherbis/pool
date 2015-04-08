@@ -42,7 +42,7 @@ func (r *Recycler) Get() (net.Conn, error) {
 }
 
 // Close will close any net.Conn's currently in the re-use queue.
-func (r *Recyler) Close() error {
+func (r *Recycler) Close() error {
 	for {
 		select {
 		case c := <-r.buf:
