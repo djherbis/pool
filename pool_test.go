@@ -1,27 +1,29 @@
 package pool
 
 import (
+	"bytes"
 	"io"
 	"net"
 	"os"
+	"testing"
 	"time"
 )
 
-func ExampleRecycler() {
+func TestRecycler(t *testing.T) {
 	go func() {
+		buf := bytes.NewBuffer(nil)
 		if l, err := net.Listen("tcp", "localhost:10001"); err == nil {
 			p := NewPool(l.Accept)
 			if c, err := p.Get(); err == nil {
-				io.Copy(os.Stdout, c)
+				io.Copy(buf, c)
 				c.Close()
 			}
 			l.Close()
 		}
+		if string(buf.Bytes()) != "Hello World\nHello World\nHello World\n" {
+			t.Errorf("recycler failed!")
+		}
 	}()
-	// Output:
-	// Hello World
-	// Hello World
-	// Hello World
 
 	r := NewRecycler(func() (net.Conn, error) {
 		return net.Dial("tcp", "localhost:10001")
@@ -43,6 +45,11 @@ func ExampleRecycler() {
 	}
 
 	r.Close()
+	p.Close()
+
+	if _, err := p.Get(); err != ErrPoolClosed {
+		t.Errorf("pool should be closed!")
+	}
 
 	<-time.After(100 * time.Millisecond)
 }
