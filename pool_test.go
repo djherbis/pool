@@ -7,6 +7,37 @@ import (
 	"time"
 )
 
+func ExampleRecycler() {
+	go func() {
+		if l, err := net.Listen("tcp", "localhost:10001"); err == nil {
+			p := NewPool(l.Accept)
+			if c, err := p.Get(); err == nil {
+				io.Copy(os.Stdout, c)
+				c.Close()
+			}
+			l.Close()
+		}
+	}()
+	// Output:
+	// Hello World
+	// Hello World
+	// Hello World
+
+	r := NewRecycler(func() (net.Conn, error) {
+		return net.Dial("tcp", "localhost:10001")
+	}, 1)
+	p := NewPool(r.Get)
+
+	for i := 0; i < 3; i++ {
+		if c, err := p.Get(); err == nil {
+			io.WriteString(c, "Hello World\n")
+			r.Put(c)
+		}
+	}
+
+	<-time.After(100 * time.Millisecond)
+}
+
 func ExamplePool() {
 	go func() {
 		if l, err := net.Listen("tcp", "localhost:10000"); err == nil {
