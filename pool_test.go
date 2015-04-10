@@ -35,6 +35,15 @@ func ExampleRecycler() {
 		}
 	}
 
+	if c, err := p.Get(); err == nil {
+		if c2, err := p.Get(); err == nil {
+			r.Put(c)
+			r.Put(c2) // should be closed, capacity is 1
+		}
+	}
+
+	r.Close() // close open connection
+
 	<-time.After(100 * time.Millisecond)
 }
 
